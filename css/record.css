@@ -1,5 +1,31 @@
-/* Leads mock prototype: 3rd panel tab content
-   (activity timeline, documents, financial, notes, follow-up) */
+/* Leads mock prototype: lead record body -- one continuous scrolling
+   page (financial, documents, notes, follow-up, activity), no tabs. */
+
+.record-section { margin-bottom: 28px; }
+.record-section:last-child { margin-bottom: 0; }
+.record-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.record-section-count {
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  padding: 1px 7px;
+  border-radius: 10px;
+  text-transform: none;
+  letter-spacing: normal;
+}
 
 .timeline { position: relative; padding-left: 24px; }
 .timeline::before {

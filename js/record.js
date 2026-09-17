@@ -1,6 +1,8 @@
-/* Leads mock prototype: 3rd panel tab content
-   (activity timeline, documents, financial, notes, follow-up).
-   Plain DOM rendering + event delegation, no framework. */
+/* Leads mock prototype: the lead record body -- financial, documents,
+   notes, follow-up, and activity, all on one continuous scrolling page
+   (no tabs). Every section title goes through the same sectionTitle()
+   helper so headings line up identically and spacing stays even without
+   hand-tuning each section separately. */
 (function () {
   'use strict';
 
@@ -30,39 +32,19 @@
     return reps[0];
   }
 
-  function renderActivityTab(lead, state) {
-    return '<div class="timeline">' + lead.activities.map(function (act, i) {
-      var color = ACTIVITY_COLORS[act.type] || '#6b7280';
-      var bg = ACTIVITY_BG[act.type] || '#f3f4f6';
-      var actorColor = act.actorId === 'system' ? 'var(--text-muted)' :
-        act.actorId === 'ai' ? 'var(--accent-purple)' :
-        (repFor(state.reps, act.actorId) || {}).color || 'var(--accent-primary)';
-      return '<div class="timeline-item" style="animation-delay:' + (i * 0.03) + 's">' +
-        '<div class="timeline-dot" style="background:' + bg + '">' + icon({ size: 8, color: color }) + '</div>' +
-        '<div class="timeline-content">' +
-        '<div class="timeline-header"><span class="timeline-title">' + escapeHtml(act.title) + '</span>' +
-        '<span class="timeline-time">' + window.LeadsMock.list.formatRelativeDate(act.timestamp) + '</span></div>' +
-        '<div class="timeline-desc">' + escapeHtml(act.description) + '</div>' +
-        (act.duration ? '<div class="timeline-desc" style="margin-top:2px;font-size:10px;color:var(--text-muted)">Duration: ' + act.duration + '</div>' : '') +
-        '<div class="timeline-actor"><span class="avatar avatar-sm" style="background:' + actorColor + ';width:16px;height:16px;font-size:7px">' +
-        act.actor.split(' ').map(function (n) { return n[0]; }).join('').slice(0, 2) + '</span>' + escapeHtml(act.actor) + '</div>' +
-        '</div></div>';
-    }).join('') + '</div>';
+  // Every section heading renders through this one function -- same
+  // markup, same classes -- so titles stay horizontally aligned and
+  // evenly spaced across the whole record without per-section tuning.
+  function sectionTitle(title, count) {
+    return '<div class="record-section-title">' + title +
+      (count !== undefined ? '<span class="record-section-count">' + count + '</span>' : '') +
+      '</div>';
+  }
+  function section(title, count, bodyHtml) {
+    return '<div class="record-section">' + sectionTitle(title, count) + bodyHtml + '</div>';
   }
 
-  function renderDocumentsTab(lead) {
-    return '<div class="doc-list">' + lead.documents.map(function (doc) {
-      return '<div class="doc-item" data-action="open-doc" data-doc-id="' + doc.id + '">' +
-        '<div class="doc-icon">' + icon({ size: 18 }) + '</div>' +
-        '<div class="doc-info"><div class="doc-label">' + escapeHtml(doc.label) + '</div>' +
-        '<div class="doc-meta">' + doc.type.toUpperCase() + ' &middot; ' + doc.size + ' &middot; ' + new Date(doc.date).toLocaleDateString() + '</div></div>' +
-        '<button type="button" class="btn-icon" data-action="open-doc" data-doc-id="' + doc.id + '">' + icon({ size: 14 }) + '</button>' +
-        '<button type="button" class="btn-icon" data-action="download-doc">' + icon({ size: 14 }) + '</button>' +
-        '</div>';
-    }).join('') + '</div>';
-  }
-
-  function renderFinancialTab(lead) {
+  function renderFinancialSection(lead) {
     var mcaCards = lead.hasMCA ? (
       '<div class="financial-card" style="border-color:var(--accent-warning-light)">' +
       '<div class="financial-card-label">MCA Balance</div>' +
@@ -102,7 +84,7 @@
       '% of monthly deposits. This recurring obligation may be restricting operational flexibility and limiting access to additional capital.</p>'
     ) : '';
 
-    return '<div>' +
+    var body = '' +
       '<div class="financial-grid">' +
       '<div class="financial-card"><div class="financial-card-label">Annual Revenue</div><div class="financial-card-value">' + formatCurrency(lead.revenue) + '</div><div class="financial-card-sub">Stated on application</div></div>' +
       '<div class="financial-card"><div class="financial-card-label">Monthly Deposits</div><div class="financial-card-value">' + formatCurrency(lead.monthlyDeposits) + '</div><div class="financial-card-sub">Avg. last 12 months</div></div>' +
@@ -128,40 +110,75 @@
       '&bull; Consistent deposit history of ' + formatCurrency(lead.monthlyDeposits) + '/month<br>' +
       '&bull; ' + (lead.hasMCA ? 'Consolidating the existing MCA into a flexible line eliminates rigid payment schedules' : 'Clean position with no existing MCA obligations') + '<br>' +
       '&bull; Revolving access means capital is available for payroll, inventory, or growth without reapplying</p>' +
-      '</div></div></div>';
+      '</div></div>';
+
+    return section('Financial', undefined, body);
   }
 
-  function renderNotesTab(lead) {
+  function renderDocumentsSection(lead) {
+    var body = '<div class="doc-list">' + lead.documents.map(function (doc) {
+      return '<div class="doc-item" data-action="open-doc" data-doc-id="' + doc.id + '">' +
+        '<div class="doc-icon">' + icon({ size: 18 }) + '</div>' +
+        '<div class="doc-info"><div class="doc-label">' + escapeHtml(doc.label) + '</div>' +
+        '<div class="doc-meta">' + doc.type.toUpperCase() + ' &middot; ' + doc.size + ' &middot; ' + new Date(doc.date).toLocaleDateString() + '</div></div>' +
+        '<button type="button" class="btn-icon" data-action="open-doc" data-doc-id="' + doc.id + '">' + icon({ size: 14 }) + '</button>' +
+        '<button type="button" class="btn-icon" data-action="download-doc">' + icon({ size: 14 }) + '</button>' +
+        '</div>';
+    }).join('') + '</div>';
+    return section('Documents', lead.documents.length, body);
+  }
+
+  function renderNotesSection(lead) {
     var notes = lead.notes ? lead.notes.split('\n').filter(function (n) { return n.trim(); }) : [];
-    var body = notes.length
-      ? notes.map(function (n, i) { return '<div class="note-item"><div class="note-text">' + escapeHtml(n) + '</div><div class="note-meta">Note #' + (i + 1) + '</div></div>'; }).join('')
-      : '<div class="empty-state">' + icon({ size: 32 }) + '<p>No notes yet</p></div>';
-    return '<div><div class="notes-area">' + body + '</div>' +
-      '<button type="button" class="btn btn-secondary" style="margin-top:12px;width:100%" data-action="open-modal" data-modal-type="note">' + icon({ size: 14 }) + ' Add Note</button></div>';
+    var body = (notes.length
+      ? '<div class="notes-area">' + notes.map(function (n, i) { return '<div class="note-item"><div class="note-text">' + escapeHtml(n) + '</div><div class="note-meta">Note #' + (i + 1) + '</div></div>'; }).join('') + '</div>'
+      : '<div class="notes-area"><div class="empty-state">' + icon({ size: 32 }) + '<p>No notes yet</p></div></div>') +
+      '<button type="button" class="btn btn-secondary" style="margin-top:12px;width:100%" data-action="open-modal" data-modal-type="note">' + icon({ size: 14 }) + ' Add Note</button>';
+    return section('Notes', notes.length, body);
   }
 
-  function renderFollowupTab(lead) {
-    if (lead.followUp) {
-      return '<div><div class="follow-up-card">' + icon({ size: 16 }) +
+  function renderFollowupSection(lead) {
+    var body = lead.followUp
+      ? '<div class="follow-up-card">' + icon({ size: 16 }) +
         '<div><div style="font-size:12px;font-weight:600;color:var(--text-primary)">' + escapeHtml(lead.followUp.action) + '</div>' +
         '<div style="font-size:11px;color:var(--text-muted);margin-top:2px">Due: ' + new Date(lead.followUp.date).toLocaleDateString() + '</div></div>' +
         '<button type="button" class="btn btn-ghost btn-sm" style="margin-left:auto" data-action="open-modal" data-modal-type="followup">' + icon({ size: 12 }) + ' Edit</button>' +
+        '</div>'
+      : '<div class="empty-state">' + icon({ size: 32 }) + '<p>No follow-up scheduled</p>' +
+        '<button type="button" class="btn btn-secondary btn-sm" data-action="open-modal" data-modal-type="followup">' + icon({ size: 12 }) + ' Schedule Follow-up</button></div>';
+    return section('Follow-up', undefined, body);
+  }
+
+  function renderActivitySection(lead, state) {
+    var body = '<div class="timeline">' + lead.activities.map(function (act, i) {
+      var color = ACTIVITY_COLORS[act.type] || '#6b7280';
+      var bg = ACTIVITY_BG[act.type] || '#f3f4f6';
+      var actorColor = act.actorId === 'system' ? 'var(--text-muted)' :
+        act.actorId === 'ai' ? 'var(--accent-purple)' :
+        (repFor(state.reps, act.actorId) || {}).color || 'var(--accent-primary)';
+      return '<div class="timeline-item" style="animation-delay:' + (i * 0.03) + 's">' +
+        '<div class="timeline-dot" style="background:' + bg + '">' + icon({ size: 8, color: color }) + '</div>' +
+        '<div class="timeline-content">' +
+        '<div class="timeline-header"><span class="timeline-title">' + escapeHtml(act.title) + '</span>' +
+        '<span class="timeline-time">' + window.LeadsMock.list.formatRelativeDate(act.timestamp) + '</span></div>' +
+        '<div class="timeline-desc">' + escapeHtml(act.description) + '</div>' +
+        (act.duration ? '<div class="timeline-desc" style="margin-top:2px;font-size:10px;color:var(--text-muted)">Duration: ' + act.duration + '</div>' : '') +
+        '<div class="timeline-actor"><span class="avatar avatar-sm" style="background:' + actorColor + ';width:16px;height:16px;font-size:7px">' +
+        act.actor.split(' ').map(function (n) { return n[0]; }).join('').slice(0, 2) + '</span>' + escapeHtml(act.actor) + '</div>' +
         '</div></div>';
-    }
-    return '<div><div class="empty-state">' + icon({ size: 32 }) + '<p>No follow-up scheduled</p>' +
-      '<button type="button" class="btn btn-secondary btn-sm" data-action="open-modal" data-modal-type="followup">' + icon({ size: 12 }) + ' Schedule Follow-up</button></div></div>';
+    }).join('') + '</div>';
+    return section('Activity', lead.activities.length, body);
   }
 
   function render(container, state, handlers) {
     if (!container) return;
     var lead = state.lead;
-    var html = '';
-    if (state.activeTab === 'activity') html = renderActivityTab(lead, state);
-    else if (state.activeTab === 'documents') html = renderDocumentsTab(lead);
-    else if (state.activeTab === 'financial') html = renderFinancialTab(lead);
-    else if (state.activeTab === 'notes') html = renderNotesTab(lead);
-    else if (state.activeTab === 'followup') html = renderFollowupTab(lead);
-    container.innerHTML = html;
+    container.innerHTML =
+      renderFinancialSection(lead) +
+      renderDocumentsSection(lead) +
+      renderNotesSection(lead) +
+      renderFollowupSection(lead) +
+      renderActivitySection(lead, state);
 
     if (container.__mockBound) return;
     container.__mockBound = true;
@@ -175,5 +192,5 @@
   }
 
   window.LeadsMock = window.LeadsMock || {};
-  window.LeadsMock.tabs = { render: render };
+  window.LeadsMock.record = { render: render };
 })();

@@ -95,6 +95,32 @@
     };
   }
 
+  // Guaranteed never a real SSN: the SSA has permanently excluded the
+  // entire 900-999 area range from SSN issuance (it's used for ITINs
+  // instead, a different, IRS-issued number). Also avoiding the
+  // excluded 00 group and 0000 serial, same belt-and-suspenders
+  // approach as the phone numbers and routing numbers above.
+  function fakeSSN(idx) {
+    var area = 900 + (idx % 100);
+    var group = 1 + (idx % 99);
+    var serial = 1 + (idx * 37) % 9999;
+    return area + '-' + String(group).padStart(2, '0') + '-' + String(serial).padStart(4, '0');
+  }
+
+  function fakeDOB(idx) {
+    var year = 1958 + (idx % 40); // ~26-65 years old
+    var month = 1 + (idx % 12);
+    var day = 1 + (idx * 7) % 28;
+    return new Date(year, month - 1, day);
+  }
+
+  var streetNames = ['Maple Ave', 'Oak St', 'Cedar Ln', 'Elm Dr', 'Willow Way', 'Birch Rd'];
+  function fakeHomeAddress(idx) {
+    return (200 + idx * 13) + ' ' + streetNames[idx % streetNames.length] + ', ' +
+      ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia'][(idx + 2) % 6] + ', ' +
+      ['NY', 'CA', 'IL', 'TX', 'AZ', 'PA'][(idx + 2) % 6] + ' ' + (20000 + idx % 79999);
+  }
+
   function generateLead(idx) {
     var company = companies[idx % companies.length];
     var fname = firstNames[idx % firstNames.length];
@@ -201,6 +227,7 @@
     var bank = fakeBankAccount(idx, monthlyDeposits, balance);
     var requestedAmount = Math.round(revenue * 0.6 / 1000) * 1000;
     var approvedAmount = Math.round(requestedAmount * (0.7 + (idx % 4) * 0.1));
+    var owner = { ssn: fakeSSN(idx), dob: fakeDOB(idx), homeAddress: fakeHomeAddress(idx) };
 
     return {
       id: 'lead-' + idx,
@@ -222,6 +249,7 @@
       bank: bank,
       requestedAmount: requestedAmount,
       approvedAmount: approvedAmount,
+      owner: owner,
       hasMCA: hasMCA,
       mcaWithdrawals: hasMCA ? Math.round(monthlyDeposits * 0.18) : 0,
       mcaBalance: hasMCA ? Math.round(revenue * 0.12) : 0,

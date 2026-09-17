@@ -33,7 +33,6 @@
     sortDir: 'desc',
     showFilters: false,
     showSortMenu: false,
-    activeTab: 'activity',
     modal: null,
     docViewer: null,
     incomingCall: null,
@@ -108,22 +107,21 @@
         onFilters: function (patch, clear) { state.filters = clear ? patch : Object.assign({}, state.filters, patch); render(); },
         onToggleSortMenu: function () { state.showSortMenu = !state.showSortMenu; state.showFilters = false; render(); },
         onSort: function (id) { state.sortBy = id; state.sortDir = state.sortDir === 'desc' ? 'asc' : 'desc'; state.showSortMenu = false; render(); },
-        onSelectLead: function (id) { state.selectedLeadId = id; state.activeTab = 'activity'; render(); },
+        onSelectLead: function (id) { state.selectedLeadId = id; render(); },
         onToggleFavorite: function (id) { updateLead(id, { favorite: !findLead(id).favorite }); render(); },
         onCloseMenus: function () { if (state.showFilters || state.showSortMenu) { state.showFilters = false; state.showSortMenu = false; render(); } },
       });
 
       var lead = selectedLead();
-      var tabContentEl = window.LeadsMock.detail.render(els.leadDetailSlot, {
-        lead: lead, reps: state.reps, getStatusById: state.getStatusById, researchDestinations: state.researchDestinations, activeTab: state.activeTab,
+      var recordBodyEl = window.LeadsMock.detail.render(els.leadDetailSlot, {
+        lead: lead, reps: state.reps, getStatusById: state.getStatusById, researchDestinations: state.researchDestinations,
       }, {
         onToggleFavorite: function () { updateLead(lead.id, { favorite: !lead.favorite }); render(); },
         onShowModal: function (type) { state.modal = { type: type }; render(); },
-        onSetActiveTab: function (id) { state.activeTab = id; render(); },
       });
 
-      if (tabContentEl && lead) {
-        window.LeadsMock.tabs.render(tabContentEl, { lead: lead, activeTab: state.activeTab, reps: state.reps }, {
+      if (recordBodyEl && lead) {
+        window.LeadsMock.record.render(recordBodyEl, { lead: lead, reps: state.reps }, {
           onOpenDoc: function (docId) {
             var doc = lead.documents.filter(function (d) { return d.id === docId; })[0];
             if (doc) { state.docViewer = { doc: doc, lead: lead }; render(); }

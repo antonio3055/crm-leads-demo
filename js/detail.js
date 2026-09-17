@@ -1,5 +1,6 @@
-/* Leads mock prototype: middle panel (header, contact info, quick actions, tab bar).
-   Plain DOM rendering + event delegation, no framework. */
+/* Leads mock prototype: middle panel (header, contact info, owner info,
+   quick actions). Renders a .record-body container that record.js fills
+   with the single-page record body. Plain DOM, no framework. */
 (function () {
   'use strict';
 
@@ -20,13 +21,9 @@
     return reps[0];
   }
 
-  var TABS = [
-    { id: 'activity', label: 'Activity', countKey: 'activities' },
-    { id: 'documents', label: 'Documents', countKey: 'documents' },
-    { id: 'financial', label: 'Financial' },
-    { id: 'notes', label: 'Notes' },
-    { id: 'followup', label: 'Follow-up' },
-  ];
+  function formatDob(d) {
+    return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
 
   function render(container, state, handlers) {
     var lead = state.lead;
@@ -70,17 +67,12 @@
       ? '<span class="status-badge" style="background:var(--accent-warning-ghost);color:var(--accent-warning)">' + icon({ size: 10 }) + ' Follow-up</span>'
       : '';
 
-    var tabsHtml = TABS.map(function (t) {
-      var count = t.countKey ? lead[t.countKey].length : undefined;
-      var active = state.activeTab === t.id;
-      return '<div class="tab' + (active ? ' active' : '') + '" data-action="set-tab" data-tab-id="' + t.id + '">' +
-        t.label +
-        (count !== undefined ? '<span style="margin-left:6px;font-size:10px;background:' +
-          (active ? 'var(--accent-primary-light)' : 'var(--bg-tertiary)') + ';color:' +
-          (active ? 'var(--accent-primary)' : 'var(--text-muted)') +
-          ';padding:1px 6px;border-radius:10px;font-weight:600">' + count + '</span>' : '') +
-        '</div>';
-    }).join('');
+    var owner = lead.owner;
+    var ownerItems = [
+      '<div class="lead-detail-info-item">' + icon({ size: 14 }) + '<span>SSN: ' + owner.ssn + '</span></div>',
+      '<div class="lead-detail-info-item">' + icon({ size: 14 }) + '<span>DOB: ' + formatDob(owner.dob) + '</span></div>',
+      '<div class="lead-detail-info-item">' + icon({ size: 14 }) + '<span>' + escapeHtml(owner.homeAddress) + '</span></div>',
+    ].join('');
 
     container.innerHTML = '' +
       '<div class="lead-detail-header">' +
@@ -98,7 +90,10 @@
       '<button type="button" class="btn-icon" data-action="more">' + icon({ size: 16 }) + '</button>' +
       '</div></div>' +
       '<div class="lead-detail-info-row">' + infoItems.join('') + '</div>' +
-      '<div class="research-bar"><span style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;align-self:center">Research:</span>' + researchBtns + '</div>' +
+      '<div class="lead-detail-info-row">' +
+      '<span class="lead-detail-row-label">Owner Info:</span>' + ownerItems +
+      '</div>' +
+      '<div class="research-bar"><span class="lead-detail-row-label">Research:</span>' + researchBtns + '</div>' +
       '</div>' +
       '<div class="quick-actions">' +
       '<button type="button" class="quick-action-btn" data-action="open-modal" data-modal-type="call">' + icon({ size: 14 }) + ' Call</button>' +
@@ -111,8 +106,7 @@
       '<span class="status-badge" style="background:' + status.bg + ';color:' + status.color + '">' + status.label + '</span>' +
       followUpBadge +
       '</div></div>' +
-      '<div class="tabs">' + tabsHtml + '</div>' +
-      '<div class="tab-content"></div>';
+      '<div class="record-body"></div>';
 
     if (!container.__mockBound) {
       container.__mockBound = true;
@@ -122,14 +116,13 @@
         var action = el.getAttribute('data-action');
         if (action === 'toggle-favorite') handlers.onToggleFavorite();
         else if (action === 'open-modal') handlers.onShowModal(el.getAttribute('data-modal-type'));
-        else if (action === 'set-tab') handlers.onSetActiveTab(el.getAttribute('data-tab-id'));
         else if (action === 'research') window.open(el.getAttribute('data-url') + encodeURIComponent(lead.company), '_blank');
       });
     }
 
-    return container.querySelector('.tab-content');
+    return container.querySelector('.record-body');
   }
 
   window.LeadsMock = window.LeadsMock || {};
-  window.LeadsMock.detail = { render: render, TABS: TABS };
+  window.LeadsMock.detail = { render: render };
 })();
