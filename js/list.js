@@ -28,6 +28,25 @@
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 
+  // Compact form for the lead-card row (1m/1h/1d/1w), distinct from
+  // formatRelativeDate's "3h ago" style used in the activity timeline --
+  // a list row wants density, a timeline entry wants readability.
+  function formatCompactAge(d) {
+    var diffMin = Math.max(1, Math.floor((new Date() - new Date(d)) / 60000));
+    if (diffMin < 60) return diffMin + 'm';
+    var diffHr = Math.floor(diffMin / 60);
+    if (diffHr < 24) return diffHr + 'h';
+    var diffDay = Math.floor(diffHr / 24);
+    if (diffDay < 7) return diffDay + 'd';
+    var diffWeek = Math.floor(diffDay / 7);
+    if (diffWeek < 5) return diffWeek + 'w';
+    return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  function formatCurrency(n) {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
+  }
+
   function repFor(reps, id) {
     for (var i = 0; i < reps.length; i++) if (reps[i].id === id) return reps[i];
     return reps[0];
@@ -114,17 +133,18 @@
     return '' +
       '<div class="lead-card' + activeClass + '" data-action="select-lead" data-lead-id="' + lead.id + '">' +
       '<div class="lead-card-header">' +
-      '<div style="min-width:0">' +
       '<div class="lead-card-company">' + escapeHtml(lead.company) + '</div>' +
-      '<div class="lead-card-contact">' + escapeHtml(lead.contact.name) + ' &middot; ' + escapeHtml((lead.phones[0] || {}).number || '') + '</div>' +
-      '</div>' +
+      '<div class="lead-card-header-right">' +
+      '<span class="lead-card-revenue">' + formatCurrency(lead.revenue) + '</span>' +
       '<button type="button" class="btn-icon" style="opacity:' + (lead.favorite ? 1 : 0.3) + '" data-action="toggle-favorite" data-lead-id="' + lead.id + '">' +
       icon({ size: 14, color: favColor }).replace('fill="none"', 'fill="' + favFill + '"') +
       '</button>' +
       '</div>' +
+      '</div>' +
+      '<div class="lead-card-contact">' + escapeHtml(lead.contact.name) + '</div>' +
       '<div class="lead-card-meta">' +
       '<span class="priority-dot priority-' + lead.priority + '"></span>' +
-      '<span style="font-size:10px;color:var(--text-muted);margin-left:auto">' + formatRelativeDate(lead.updatedAt) + '</span>' +
+      '<span style="font-size:10px;color:var(--text-muted);margin-left:auto">' + formatCompactAge(lead.updatedAt) + '</span>' +
       '</div></div>';
   }
 

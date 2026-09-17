@@ -164,8 +164,9 @@
 
 .lead-card-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
+  gap: 12px;
   margin-bottom: 1px;
 }
 .lead-card-company {
@@ -176,7 +177,22 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 380px;
+  min-width: 0;
+}
+.lead-card-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.lead-card-header-right .btn-icon { width: 20px; height: 20px; }
+.lead-card-revenue {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  white-space: nowrap;
 }
 .lead-card-contact { font-size: 11px; color: var(--text-tertiary); margin-bottom: 2px; }
 .lead-card-meta { display: flex; align-items: center; gap: 8px; }
