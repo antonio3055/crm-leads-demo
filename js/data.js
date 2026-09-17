@@ -52,9 +52,11 @@
 
   var firstNames = ['James', 'Maria', 'Robert', 'Jennifer', 'Michael', 'Linda', 'William', 'Patricia', 'David', 'Elizabeth',
     'Richard', 'Susan', 'Joseph', 'Jessica', 'Thomas', 'Sarah', 'Charles', 'Karen', 'Daniel', 'Nancy',
-    'Matthew', 'Lisa', 'Anthony', 'Betty', 'Mark', 'Helen', 'Donald', 'Sandra', 'Steven', 'Donna'];
+    'Matthew', 'Lisa', 'Anthony', 'Betty', 'Mark', 'Helen', 'Donald', 'Sandra', 'Steven', 'Donna',
+    'Elena', 'Marcus', 'Priya', 'Dominic', 'Tess', 'Rahul', 'Jonah'];
   var lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez',
-    'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin'];
+    'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin',
+    'Voss', 'Chen', 'Shah', 'Ruiz', 'Marlowe', 'Mehta', 'Hale'];
 
   var areaCodes = ['212', '310', '312', '404', '480', '512', '617', '702', '718', '917'];
 
@@ -65,6 +67,32 @@
     var area = areaCodes[(idx + offset) % areaCodes.length];
     var line = '01' + String((idx * 3 + offset * 7) % 100).padStart(2, '0');
     return '(' + area + ') 555-' + line;
+  }
+
+  var bankNames = ['Chase Business Complete', 'Bank of America Business Advantage', 'Wells Fargo Business Choice', 'PNC Business Checking'];
+
+  // Guaranteed invalid: a real ABA routing number must satisfy
+  // 3(d1+d4+d7) + 7(d2+d5+d8) + 1(d3+d6+d9) === 0 (mod 10). Generating
+  // digits and then nudging the last one off that checksum means this
+  // number can never validate as a real bank's real routing number,
+  // regardless of which bank-name label sits next to it.
+  function fakeRoutingNumber(idx) {
+    var d = [];
+    for (var i = 0; i < 9; i++) d.push((idx * (i + 3) + i * 7) % 10);
+    var checksum = (3 * (d[0] + d[3] + d[6]) + 7 * (d[1] + d[4] + d[7]) + 1 * (d[2] + d[5] + d[8])) % 10;
+    if (checksum === 0) d[8] = (d[8] + 1) % 10;
+    return d.join('');
+  }
+
+  function fakeBankAccount(idx, monthlyDeposits, endingBalance) {
+    return {
+      name: bankNames[idx % bankNames.length],
+      accountMasked: '••••' + String(1000 + (idx * 137) % 8999),
+      routing: fakeRoutingNumber(idx),
+      type: 'Checking',
+      avgDailyBalance: Math.round(monthlyDeposits * 0.42),
+      currentBalance: endingBalance,
+    };
   }
 
   function generateLead(idx) {
@@ -170,6 +198,9 @@
     });
 
     var hasMCA = idx % 5 === 0;
+    var bank = fakeBankAccount(idx, monthlyDeposits, balance);
+    var requestedAmount = Math.round(revenue * 0.6 / 1000) * 1000;
+    var approvedAmount = Math.round(requestedAmount * (0.7 + (idx % 4) * 0.1));
 
     return {
       id: 'lead-' + idx,
@@ -188,6 +219,9 @@
       monthlyDeposits: monthlyDeposits,
       endingBalance: balance,
       deposits: deposits,
+      bank: bank,
+      requestedAmount: requestedAmount,
+      approvedAmount: approvedAmount,
       hasMCA: hasMCA,
       mcaWithdrawals: hasMCA ? Math.round(monthlyDeposits * 0.18) : 0,
       mcaBalance: hasMCA ? Math.round(revenue * 0.12) : 0,

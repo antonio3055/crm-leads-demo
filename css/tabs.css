@@ -96,6 +96,25 @@
 }
 .financial-card-sub { font-size: 11px; color: var(--text-tertiary); margin-top: 4px; }
 
+.bank-account {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.bank-account-title { font-size: 12px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+.bank-account-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 12px;
+}
+.bank-account-row:last-child { border-bottom: none; }
+.bank-account-label { color: var(--text-tertiary); }
+.bank-account-value { color: var(--text-primary); font-family: var(--font-mono); font-weight: 500; }
+
 .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding: 10px 0; }
 .bar-chart-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .bar-chart-bar {

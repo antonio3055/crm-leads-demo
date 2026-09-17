@@ -80,6 +80,21 @@
         '<span class="bar-chart-label">' + d.month + '</span></div>';
     }).join('');
 
+    var bank = lead.bank;
+    var bankAccountBlock = '<div class="bank-account">' +
+      '<div class="bank-account-title">Bank Account</div>' +
+      '<div class="bank-account-row"><span class="bank-account-label">Bank</span><span class="bank-account-value">' + escapeHtml(bank.name) + '</span></div>' +
+      '<div class="bank-account-row"><span class="bank-account-label">Account</span><span class="bank-account-value">' + bank.accountMasked + '</span></div>' +
+      '<div class="bank-account-row"><span class="bank-account-label">Routing</span><span class="bank-account-value">' + bank.routing + '</span></div>' +
+      '<div class="bank-account-row"><span class="bank-account-label">Type</span><span class="bank-account-value">' + bank.type + '</span></div>' +
+      '<div class="bank-account-row"><span class="bank-account-label">Avg Daily Balance</span><span class="bank-account-value">' + formatCurrency(bank.avgDailyBalance) + '</span></div>' +
+      '<div class="bank-account-row"><span class="bank-account-label">Current Balance</span><span class="bank-account-value">' + formatCurrency(bank.currentBalance) + '</span></div>' +
+      '</div>';
+
+    var approvalLine = '<p><strong>Approval:</strong> Approved for ' + formatCurrency(lead.approvedAmount) +
+      ' against a ' + formatCurrency(lead.requestedAmount) + ' request, based on ' + formatCurrency(lead.monthlyDeposits) +
+      ' in average monthly deposits and a ' + formatCurrency(bank.currentBalance) + ' current balance.</p>';
+
     var mcaConcern = lead.hasMCA ? (
       '<p><strong>Cash Flow Concern:</strong> The existing MCA position of ' + formatCurrency(lead.mcaBalance) +
       ' with monthly withdrawals of ' + formatCurrency(lead.mcaWithdrawals) + ' is consuming approximately ' +
@@ -95,6 +110,7 @@
       '<div class="financial-card"><div class="financial-card-label">Years in Business</div><div class="financial-card-value">' + lead.yearsInBusiness + '</div><div class="financial-card-sub">Established business</div></div>' +
       mcaCards +
       '</div>' +
+      bankAccountBlock +
       '<div style="background:var(--bg-secondary);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:16px;margin-bottom:16px">' +
       '<div style="font-size:12px;font-weight:600;margin-bottom:12px;color:var(--text-primary)">Monthly Deposit Trend</div>' +
       '<div class="bar-chart">' + bars + '</div></div>' +
@@ -103,6 +119,7 @@
       '<p><strong>Financial Snapshot:</strong> ' + escapeHtml(lead.company) + ' shows ' + lead.yearsInBusiness +
       '+ years of operation with ' + formatCurrency(lead.revenue) + ' in annual revenue. Monthly deposits average ' +
       formatCurrency(lead.monthlyDeposits) + ' with a current ending balance of ' + formatCurrency(lead.endingBalance) + '.</p>' +
+      approvalLine +
       mcaConcern +
       '<p><strong>Revolving Line Opportunity:</strong> A revolving line of credit would provide ' + escapeHtml(lead.company) +
       ' with on-demand access to working capital without the rigid daily/weekly repayment structure of an MCA. This preserves cash flow during slower periods and allows the business to draw only what is needed, when it is needed.</p>' +
