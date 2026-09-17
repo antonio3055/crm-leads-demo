@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Apex CRM &mdash; Leads (prototype)</title>
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/list.css">
+<link rel="stylesheet" href="css/detail.css">
+<link rel="stylesheet" href="css/tabs.css">
+<link rel="stylesheet" href="css/modals.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+        <path d="M2 17l10 5 10-5"></path>
+        <path d="M2 12l10 5 10-5"></path>
+      </svg>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-avatar">AM</div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="leads-page" id="leads-page">
+      <div class="leads-list-panel" id="leads-list-panel"></div>
+      <div id="lead-detail-slot" class="lead-detail-panel"></div>
+    </div>
+    <div class="placeholder-page" id="other-page" style="display:none"></div>
+  </main>
+</div>
+
+<div id="notification-root"></div>
+<div id="docviewer-root"></div>
+<div class="modal-overlay" id="modal-overlay" style="display:none">
+  <div class="modal" id="modal-root"></div>
+</div>
+
+<script src="js/icons.js"></script>
+<script src="js/data.js"></script>
+<script src="js/list.js"></script>
+<script src="js/detail.js"></script>
+<script src="js/tabs.js"></script>
+<script src="js/modals.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
