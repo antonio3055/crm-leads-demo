@@ -108,8 +108,6 @@
   }
 
   function renderCard(lead, state) {
-    var status = state.getStatusById(lead.status);
-    var rep = repFor(state.reps, lead.assignedTo);
     var activeClass = state.selectedLeadId === lead.id ? ' active' : '';
     var favColor = lead.favorite ? 'var(--accent-warning)' : 'var(--text-muted)';
     var favFill = lead.favorite ? 'var(--accent-warning)' : 'none';
@@ -125,9 +123,7 @@
       '</button>' +
       '</div>' +
       '<div class="lead-card-meta">' +
-      '<span class="status-badge" style="background:' + status.bg + ';color:' + status.color + '">' + status.label + '</span>' +
       '<span class="priority-dot priority-' + lead.priority + '"></span>' +
-      '<span class="avatar avatar-sm" style="background:' + rep.color + '">' + rep.initials + '</span>' +
       '<span style="font-size:10px;color:var(--text-muted);margin-left:auto">' + formatRelativeDate(lead.updatedAt) + '</span>' +
       '</div></div>';
   }
