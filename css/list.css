@@ -7,9 +7,9 @@
 }
 
 .leads-list-panel {
-  width: 560px;
-  min-width: 420px;
-  max-width: 760px;
+  width: 420px;
+  min-width: 340px;
+  max-width: 640px;
   background: var(--bg-secondary);
   border-right: 1px solid var(--border-subtle);
   display: flex;
@@ -191,7 +191,6 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
-  font-family: var(--font-mono);
   white-space: nowrap;
 }
 .lead-card-contact { font-size: 11px; color: var(--text-tertiary); margin-bottom: 2px; }

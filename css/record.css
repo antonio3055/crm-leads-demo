@@ -60,7 +60,7 @@
 }
 .timeline-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
 .timeline-title { font-size: 12px; font-weight: 600; color: var(--text-primary); }
-.timeline-time { font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); }
+.timeline-time { font-size: 10px; color: var(--text-muted); }
 .timeline-desc { font-size: 11px; color: var(--text-secondary); line-height: 1.5; margin-top: 4px; }
 .timeline-actor { font-size: 10px; color: var(--text-muted); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
 
@@ -118,7 +118,6 @@
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.02em;
-  font-family: var(--font-mono);
 }
 .financial-card-sub { font-size: 11px; color: var(--text-tertiary); margin-top: 4px; }
 
@@ -139,7 +138,7 @@
 }
 .bank-account-row:last-child { border-bottom: none; }
 .bank-account-label { color: var(--text-tertiary); }
-.bank-account-value { color: var(--text-primary); font-family: var(--font-mono); font-weight: 500; }
+.bank-account-value { color: var(--text-primary); font-weight: 500; }
 
 .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding: 10px 0; }
 .bar-chart-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
@@ -152,7 +151,7 @@
   opacity: 0.8;
 }
 .bar-chart-bar:hover { opacity: 1; }
-.bar-chart-label { font-size: 9px; color: var(--text-muted); font-family: var(--font-mono); }
+.bar-chart-label { font-size: 9px; color: var(--text-muted); }
 
 .ai-pitch {
   background: var(--accent-purple-ghost);
