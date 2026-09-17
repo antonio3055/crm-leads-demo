@@ -1,0 +1,67 @@
+/* Messages / Email / Scanner / Command pages */
+
+.static-page { display: flex; flex: 1; overflow: hidden; }
+
+.folder-nav {
+  width: 280px;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.folder-nav-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.folder-nav-title { font-size: 15px; font-weight: 600; }
+
+.folder-list { padding: 8px 0; }
+.folder-item {
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-secondary);
+  transition: background 0.12s;
+}
+.folder-item:hover { background: var(--bg-subtle); }
+.folder-item svg { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; }
+.folder-item-label { flex: 1; }
+.folder-item-count {
+  font-size: 10px;
+  background: var(--accent-primary-light);
+  color: var(--accent-primary);
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.card-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+  justify-content: center;
+}
+.info-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  text-align: center;
+  min-width: 150px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.info-card:hover { border-color: var(--border-medium); box-shadow: var(--shadow-sm); }
+.info-card svg { width: 24px; height: 24px; color: var(--text-muted); margin-bottom: 8px; }
+.info-card-label { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+.info-card-desc { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+.info-card-count { font-size: 10px; color: var(--accent-primary); margin-top: 4px; font-weight: 600; }

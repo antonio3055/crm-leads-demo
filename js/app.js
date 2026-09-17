@@ -17,11 +17,10 @@
 
   var NAV_ITEMS = [
     { id: 'leads', label: 'Leads' },
-    { id: 'messages', label: 'Messages', badge: true, title: 'Messages', desc: 'SMS and WhatsApp messaging center' },
-    { id: 'email', label: 'Email', badge: true, title: 'Email', desc: 'Professional CRM email workspace' },
-    { id: 'scanner', label: 'Scanner', title: 'Scanner', desc: 'Document intake, OCR review, and lead creation' },
-    { id: 'campaigns', label: 'Campaigns', title: 'Campaigns', desc: 'Email, SMS, and WhatsApp campaign builder' },
-    { id: 'command', label: 'Command', title: 'Command', desc: 'Owner controls, user management, and system oversight' },
+    { id: 'messages', label: 'Messages', badge: true },
+    { id: 'email', label: 'Email', badge: true },
+    { id: 'scanner', label: 'Scanner' },
+    { id: 'command', label: 'Command' },
   ];
 
   var state = {
@@ -85,8 +84,9 @@
     var html = NAV_ITEMS.map(function (item) {
       return '<div class="sidebar-item' + (state.activePage === item.id ? ' active' : '') + '" data-action="nav" data-page-id="' + item.id + '">' +
         icon({ strokeWidth: 1.8 }) +
+        '<span class="sidebar-item-label">' + item.label + '</span>' +
         (item.badge ? '<span class="sidebar-badge"></span>' : '') +
-        '<span class="sidebar-tooltip">' + item.label + '</span></div>';
+        '</div>';
     }).join('');
     els.sidebarNav.innerHTML = html;
   }
@@ -132,10 +132,8 @@
         });
       }
     } else {
-      var item = NAV_ITEMS.filter(function (n) { return n.id === state.activePage; })[0];
-      if (item) {
-        els.otherPage.innerHTML = icon({ size: 48 }) + '<h2>' + item.title + '</h2><p>' + item.desc + '</p>';
-      }
+      var page = window.LeadsMock.staticPages[state.activePage];
+      if (page) page.render(els.otherPage);
     }
   }
 

@@ -9,20 +9,28 @@
 <link rel="stylesheet" href="css/detail.css">
 <link rel="stylesheet" href="css/tabs.css">
 <link rel="stylesheet" href="css/modals.css">
+<link rel="stylesheet" href="css/static-pages.css">
 </head>
 <body>
 <div class="app-shell">
   <aside class="sidebar">
-    <div class="sidebar-logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-        <path d="M2 17l10 5 10-5"></path>
-        <path d="M2 12l10 5 10-5"></path>
-      </svg>
+    <div class="sidebar-logo-row">
+      <div class="sidebar-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+          <path d="M2 17l10 5 10-5"></path>
+          <path d="M2 12l10 5 10-5"></path>
+        </svg>
+      </div>
+      <span class="sidebar-wordmark">Apex CRM</span>
     </div>
     <nav class="sidebar-nav" id="sidebar-nav"></nav>
-    <div class="sidebar-bottom">
+    <div class="sidebar-bottom" id="sidebar-user">
       <div class="sidebar-avatar">AM</div>
+      <div>
+        <div class="sidebar-user-name">Alex Morgan</div>
+        <div class="sidebar-user-role">Senior Rep</div>
+      </div>
     </div>
   </aside>
 
@@ -31,7 +39,7 @@
       <div class="leads-list-panel" id="leads-list-panel"></div>
       <div id="lead-detail-slot" class="lead-detail-panel"></div>
     </div>
-    <div class="placeholder-page" id="other-page" style="display:none"></div>
+    <div id="other-page" style="display:none;flex:1;overflow:hidden"></div>
   </main>
 </div>
 
@@ -47,6 +55,7 @@
 <script src="js/detail.js"></script>
 <script src="js/tabs.js"></script>
 <script src="js/modals.js"></script>
+<script src="js/static-pages.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
